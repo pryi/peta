@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Peta Dunia</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        #container {
+            width: 80%;
+            max-width: 800px;
+            margin: 0 auto;
+            background-color: #fff;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            text-align: center;
+        }
+
+        h1 {
+            margin: 20px 0;
+            font-size: 24px;
+        }
+
+        #map {
+            height: 500px;
+            width: 100%;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+        }
+
+        #coordinates {
+            margin-top: 10px;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <div id="container">
+        <h1>Peta Bumi</h1>
+        <div id="map"></div>
+        <div id="coordinates">Koordinat: -6.897079, 109.608512</div>
+    </div>
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Koordinat awal: Mayangan, Wiradesa, Pekalongan, Jawa Tengah, Indonesia
+            var initialCoordinates = [-6.897079, 109.608512];
+
+            // Membuat peta
+            var map = L.map('map').setView(initialCoordinates, 13);
+
+            // Menambahkan tile layer
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+            }).addTo(map);
+
+            // Menambahkan marker yang dapat dipindahkan (draggable)
+            var marker = L.marker(initialCoordinates, { draggable: true }).addTo(map)
+                .bindPopup('Mayangan, Wiradesa, Pekalongan, Jawa Tengah, Indonesia')
+                .openPopup();
+
+            // Menampilkan koordinat di bawah peta
+            function updateCoordinates(lat, lng) {
+                document.getElementById('coordinates').innerText = `Koordinat: ${lat.toFixed(6)}, ${lng.toFixed(6)}`;
+            }
+
+            // Memperbarui koordinat saat marker dipindahkan
+            marker.on('dragend', function(e) {
+                var position = e.target.getLatLng();
+                updateCoordinates(position.lat, position.lng);
+                marker.setLatLng(position, { draggable: true }).bindPopup(`Koordinat baru: ${position.lat.toFixed(6)}, ${position.lng.toFixed(6)}`).openPopup();
+            });
+
+            // Event listener untuk klik pada peta
+            map.on('click', function(e) {
+                var position = e.latlng;
+                marker.setLatLng(position, { draggable: true }).bindPopup(`Koordinat: ${position.lat.toFixed(6)}, ${position.lng.toFixed(6)}`).openPopup();
+                updateCoordinates(position.lat, position.lng);
+            });
+
+            updateCoordinates(initialCoordinates[0], initialCoordinates[1]);
+        });
+    </script>
+</body>
+</html>
